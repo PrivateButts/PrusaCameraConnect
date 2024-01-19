@@ -1,7 +1,10 @@
 import importlib
+import structlog
 from dataclasses import dataclass
 from strictyaml import Map, Str, Float, Seq, Enum as YamlEnum, Url, Optional, Any
 from enum import Enum
+
+log = structlog.get_logger()
 
 
 class PrinterState(Enum):
@@ -30,7 +33,7 @@ SCHEMA = Map(
                     "fingerprint": Str(),
                     "token": Str(),
                     "interval": Float(),
-                    "handler": YamlEnum(["ImageUrl.ImageUrlHandler"]),
+                    "handler": Str(),
                     "handler_config": Any(),
                     Optional("printer_link"): Map(
                         {
@@ -80,7 +83,11 @@ class Camera:
             PrinterLink(**self.printer_link) if self.printer_link else None
         )
 
-        module_name, class_name = self.handler.split(".")
-        module = importlib.import_module(f"Camera.{module_name}")
+        module_name = ".".join(self.handler.split(".")[0:-1])
+        class_name = self.handler.split(".")[-1]
+        log.debug(f"Importing {class_name} from {module_name}")
+        module = importlib.import_module(module_name)
         handler_class = getattr(module, class_name)
-        self.handle = handler_class(self, self.handler_config)
+        self.handle: "Camera.BaseCameraHandler" = handler_class(
+            self, self.handler_config
+        )

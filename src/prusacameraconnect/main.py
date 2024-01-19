@@ -39,9 +39,15 @@ async def camera_loop(camera: Camera):
 async def main():
     await log.ainfo("Starting Prusa Camera Connect")
     tasks = []
-    for camera in config.cameras:
-        tasks.append(asyncio.create_task(camera_loop(camera)))
-
+    try:
+        for camera in config.cameras:
+            tasks.append(asyncio.create_task(camera_loop(camera)))
+    except ModuleNotFoundError as e:
+        await log.aerror(f"Camera handler load failed: {e.msg}, check your config")
+        return
+    except AttributeError as e:
+        await log.aerror(f"Camera handler load failed: {e.args[0]}, check your config")
+        return
     await asyncio.gather(*tasks)
     await log.ainfo("Stopping Prusa Camera Connect")
 

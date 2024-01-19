@@ -1,56 +1,7 @@
-from dataclasses import dataclass
-import importlib
 from pathlib import Path
-from strictyaml import load, Map, Str, Float, Seq, Enum, Url, YAMLError, as_document
+from strictyaml import load
 
-from Camera import BaseCameraHandler
-
-SCHEMA = Map(
-    {
-        "global_config": Map(
-            {
-                "connect_endpoint": Url(),
-            }
-        ),
-        "cameras": Seq(
-            Map(
-                {
-                    "name": Str(),
-                    "fingerprint": Str(),
-                    "token": Str(),
-                    "interval": Float(),
-                    "handler": Enum(["ImageUrl.ImageUrlHandler"]),
-                    "handler_config": Map(
-                        {
-                            "url": Url(),
-                        }
-                    ),
-                }
-            )
-        ),
-    }
-)
-
-
-@dataclass
-class GlobalConfig:
-    connect_endpoint: str
-
-
-@dataclass
-class Camera:
-    name: str
-    fingerprint: str
-    token: str
-    interval: float
-    handler: str
-    handler_config: dict
-
-    def __post_init__(self):
-        module_name, class_name = self.handler.split(".")
-        module = importlib.import_module(f"Camera.{module_name}")
-        handler_class = getattr(module, class_name)
-        self.handle = handler_class(**self.handler_config)
+from Types import Camera, GlobalConfig, SCHEMA
 
 
 class Config:

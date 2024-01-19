@@ -1,7 +1,7 @@
 version: '3'
 services:
   app:
-    image: ghcr.io/privatebutts/prusacameraconnect:latest
+    image: ghcr.io/privatebutts/prusacameraconnect:main
     build:
       context: .
       dockerfile: Dockerfile

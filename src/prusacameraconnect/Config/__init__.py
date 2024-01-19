@@ -16,7 +16,9 @@ class Config:
             config_location = Path("config.yaml")
 
         if not config_location.exists():
-            raise FileNotFoundError(f"Config file not found at {config_location}")
+            raise FileNotFoundError(
+                f"Config file not found at {config_location.absolute()}"
+            )
 
         with config_location.open() as f:
             self.config = load(f.read(), SCHEMA).data

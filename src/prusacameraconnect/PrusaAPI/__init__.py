@@ -44,6 +44,7 @@ class PrusaLinkAPI:
         """Returns an aiohttp ClientSession."""
         return aiohttp.ClientSession(self.endpoint)
 
+    # Digest auth implementation borrowed from homeassistant's pyprusalink project
     def _extract_digest_params(self, headers: dict[str]) -> None:
         """Extract realm, nonce key from Digest Auth header"""
         header_value = headers.get("WWW-Authenticate", "")

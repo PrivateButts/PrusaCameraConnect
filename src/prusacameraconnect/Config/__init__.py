@@ -1,5 +1,6 @@
 from pathlib import Path
 from strictyaml import load
+import os
 
 from Types import Camera, GlobalConfig, SCHEMA
 
@@ -10,8 +11,7 @@ class Config:
     def __init__(self, config_location: Path | None = None):
         self._load_config(config_location)
 
-    def _load_config(self, config_location: Path | None = None):
-        """Loads the config from the config_location, or from the default location if not specified."""
+    def _load_config_file(self, config_location: Path | None = None):
         if config_location is None:
             config_location = Path("config.yaml")
 
@@ -21,7 +21,17 @@ class Config:
             )
 
         with config_location.open() as f:
-            self.config = load(f.read(), SCHEMA).data
+            return f.read()
+
+    def _load_config(self, config_location: Path | None = None):
+        """Loads the config from the config_location, or from the default location if not specified."""
+        config_data = (
+            os.getenv("APP_CONFIG")
+            if os.getenv("APP_CONFIG")
+            else self._load_config_file(config_location)
+        )
+
+        self.config = load(config_data, SCHEMA).data
 
     @property
     def settings(self):

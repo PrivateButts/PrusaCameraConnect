@@ -15,8 +15,11 @@ cameras:                                          # List of cameras to relay sna
       password: "password from panel"             # Password for the printer
       snapshot_states:                            # You can remove items from this list to prevent snapshots from being taken in certain printer states
         - IDLE
+        - BUSY
+        - READY
+        - PRINTING
         - PAUSED
+        - FINISHED
+        - STOPPED
         - ERROR
         - ATTENTION
-        - PRINTING
-        - FINISHED

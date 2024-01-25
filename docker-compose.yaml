@@ -3,6 +3,7 @@ services:
   app:
     image: ghcr.io/privatebutts/prusacameraconnect:main
     build:
+      # Remove this section if you're not building from source
       context: .
       dockerfile: Dockerfile
     restart: unless-stopped
@@ -28,8 +29,11 @@ services:
               password: "password from panel"       # Password for the printer
               snapshot_states:                      # You can remove items from this list to prevent snapshots from being taken in certain printer states
                 - IDLE
+                - BUSY
+                - READY
+                - PRINTING
                 - PAUSED
+                - FINISHED
+                - STOPPED
                 - ERROR
                 - ATTENTION
-                - PRINTING
-                - FINISHED

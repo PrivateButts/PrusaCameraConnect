@@ -62,4 +62,22 @@ A justfile has been provided for either reference or convenience.
 
 ## Example Tutorial, Wyze Camera
 
-It's pretty common for people to use Wyze Cameras to keep an eye on their printer. Prusa Connect doesn't support those cameras offically, so we can use this server and [Wyze Bridge](https://github.com/mrlt8/docker-wyze-bridge) to get it in the panel.
+It's pretty common for people to use Wyze Cameras to keep an eye on their printer. Prusa Connect doesn't support those cameras offically, so we can use this server and [Wyze Bridge](https://github.com/mrlt8/docker-wyze-bridge) to get it in the panel. This tutorial will assume that you have Wyze Bridge up and running, and a working install of Docker.
+
+1. Set up a clean folder to work in.
+2. Download this repo's [docker-compose.yaml](docker-compose.yaml) to that folder
+3. Remove the `build:` block from the yaml file. This is only needed if you want to make custom changes to the source code.
+4. Choose to configure with either `APP_CONFIG` environmental variable or a file you'll mount into the container.
+
+> An example of the config file can be found [here](src/prusacameraconnect/example-config.yaml)
+
+5. Update the config values to match your setup. You can make multiple camera entries to cover multiple printer/camera combos.
+
+- Just randomly generate a longish string for fingerprint
+- You can get token from the camera tab of Prusa Connect. Click "Add new other camera" then copy the token of the new entry.
+- Pick a handler based on what feeds you get out of your camera. For example, Wyze Brige exposes a snapshot url that `Camera.ImageUrl.ImageUrlHandler` can scrape. Refer to the above section on handlers to deal with it.
+- `printer_link` is optional. Not providing it will cause the server to constantly relay snapshots to prusa cloud. I prefer to only have it update when the printer is in use, ready, or requires intervention or attention. Use the credentials in your printer's settings, url will most likely be http:// + ip address of your printer.
+
+5. Start the server with `docker compose up`. To start in background, use `-d`.
+
+6. You should start seeing snapshots in the Prusa Connect dashboard.

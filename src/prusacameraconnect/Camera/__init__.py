@@ -10,7 +10,7 @@ log = structlog.get_logger()
 class BaseCameraHandler:
     camera: Camera
 
-    def __init__(self, camera):
+    def __init__(self, camera: Camera):
         self.camera = camera
 
     async def fetch(self) -> Image:

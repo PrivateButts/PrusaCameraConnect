@@ -3,6 +3,8 @@ import io
 import aiohttp
 import structlog
 
+from Types import Camera
+
 from . import BaseCameraHandler
 
 log = structlog.get_logger()
@@ -11,7 +13,7 @@ log = structlog.get_logger()
 class ImageUrlHandler(BaseCameraHandler):
     """This handler is used to fetch an image from a URL, which some IP cameras provide."""
 
-    def __init__(self, camera, options: dict):
+    def __init__(self, camera: Camera, options: dict):
         super().__init__(camera)
         self.url = options["url"]
 

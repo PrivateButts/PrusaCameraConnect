@@ -31,7 +31,7 @@ async def camera_loop(camera: Camera):
             await api.upload_snapshot(camera.token, camera.fingerprint, image)
         except KeyboardInterrupt:
             return
-        except Exception as e:
+        except Exception:
             await log.aexception(f"Job failed for {camera.name}")
         await asyncio.sleep(camera.interval)
 

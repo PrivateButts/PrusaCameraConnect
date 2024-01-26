@@ -22,5 +22,5 @@ class BaseCameraHandler:
         image = await self.fetch()
         stringBuffer = io.BytesIO()
         image.save(stringBuffer, format="JPEG")
-        await log.adebug(f"Converted to snapshot")
+        await log.adebug("Converted to snapshot")
         return stringBuffer.getvalue()

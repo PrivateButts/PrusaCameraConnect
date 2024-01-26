@@ -21,7 +21,7 @@ class VideoCaptureHandler(BaseCameraHandler):
         ret, frame = self.source.read()
 
         if not ret:
-            raise Exception(f"Failed to fetch image")
+            raise Exception("Failed to fetch image")
 
         frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
 

@@ -27,8 +27,6 @@ class ImageUrlHandler(BaseCameraHandler):
         async with self._session as session:
             async with session.get(self.url) as resp:
                 if resp.status != 200:
-                    raise Exception(
-                        f"Failed to fetch image: {resp.status} {resp.reason}"
-                    )
-                await log.adebug(f"Fetched image", url=self.url, status=resp.status)
+                    raise Exception(f"Failed to fetch image: {resp.status} {resp.reason}")
+                await log.adebug("Fetched image", url=self.url, status=resp.status)
                 return Image.open(io.BytesIO(await resp.read()))

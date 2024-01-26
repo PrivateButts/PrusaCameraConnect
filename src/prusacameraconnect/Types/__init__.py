@@ -40,9 +40,7 @@ SCHEMA = Map(
                             "url": Url(),
                             "username": Str(),
                             "password": Str(),
-                            "snapshot_states": Seq(
-                                YamlEnum([x.value for x in PrinterState])
-                            ),
+                            "snapshot_states": Seq(YamlEnum([x.value for x in PrinterState])),
                         }
                     ),
                 }
@@ -79,15 +77,11 @@ class Camera:
     printer_link: PrinterLink | None = None
 
     def __post_init__(self):
-        self.printer_link = (
-            PrinterLink(**self.printer_link) if self.printer_link else None
-        )
+        self.printer_link = PrinterLink(**self.printer_link) if self.printer_link else None
 
         module_name = ".".join(self.handler.split(".")[0:-1])
         class_name = self.handler.split(".")[-1]
         log.debug(f"Importing {class_name} from {module_name}")
         module = importlib.import_module(module_name)
         handler_class = getattr(module, class_name)
-        self.handle: "Camera.BaseCameraHandler" = handler_class(
-            self, self.handler_config
-        )
+        self.handle: "Camera.BaseCameraHandler" = handler_class(self, self.handler_config)

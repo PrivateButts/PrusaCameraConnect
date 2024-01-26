@@ -16,9 +16,7 @@ class PrusaConnectAPI:
         """Returns an aiohttp ClientSession."""
         return aiohttp.ClientSession(self.endpoint)
 
-    async def upload_snapshot(
-        self, token: str, fingerprint: str, snapshot: str
-    ) -> None:
+    async def upload_snapshot(self, token: str, fingerprint: str, snapshot: str) -> None:
         """Uploads a snapshot to Prusa Connect, uses token and fingerprint to authenticate, snapshot should be a binary string of a JPEG image."""
         async with self._session as session:
             async with session.put(
@@ -27,10 +25,8 @@ class PrusaConnectAPI:
                 data=snapshot,
             ) as resp:
                 if resp.status != 204:
-                    raise Exception(
-                        f"Failed to upload snapshot: {resp.status} {resp.reason}"
-                    )
-                await log.adebug(f"Uploaded snapshot", fingerprint=fingerprint)
+                    raise Exception(f"Failed to upload snapshot: {resp.status} {resp.reason}")
+                await log.adebug("Uploaded snapshot", fingerprint=fingerprint)
 
 
 class PrusaLinkAPI:
@@ -66,13 +62,9 @@ class PrusaLinkAPI:
     async def get_status(self, tigger_digest=False) -> dict:
         headers = {}
         if tigger_digest:
-            ha1 = hashlib.md5(
-                f"{self.username}:{self._realm}:{self.password}".encode()
-            ).hexdigest()
-            ha2 = hashlib.md5(f"GET:/api/v1/status".encode()).hexdigest()
-            response_value = hashlib.md5(
-                f"{ha1}:{self._nonce}:{ha2}".encode()
-            ).hexdigest()
+            ha1 = hashlib.md5(f"{self.username}:{self._realm}:{self.password}".encode()).hexdigest()
+            ha2 = hashlib.md5("GET:/api/v1/status".encode()).hexdigest()
+            response_value = hashlib.md5(f"{ha1}:{self._nonce}:{ha2}".encode()).hexdigest()
             headers = {
                 "Authorization": f'Digest username="{self.username}", realm="{self._realm}", '
                 f'nonce="{self._nonce}", uri="/api/v1/status", response="{response_value}"'
@@ -85,9 +77,7 @@ class PrusaLinkAPI:
                     return await self.get_status(True)
 
                 if resp.status != 200:
-                    raise Exception(
-                        f"Failed to get status: {resp.status} {resp.reason}"
-                    )
+                    raise Exception(f"Failed to get status: {resp.status} {resp.reason}")
                 return await resp.json()
 
     async def get_printer_state(self) -> PrinterState:

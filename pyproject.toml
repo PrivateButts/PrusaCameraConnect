@@ -2,9 +2,7 @@
 name = "PrusaCameraConnect"
 version = "0.1.0"
 description = "Generic camera relay for PrusaConnect"
-authors = [
-    {name = "Private Butts", email = "inquiries@privatebutts.dev"},
-]
+authors = [{ name = "Private Butts", email = "inquiries@privatebutts.dev" }]
 dependencies = [
     "aiohttp[speedups]>=3.9.1",
     "Pillow>=10.2.0",
@@ -15,8 +13,21 @@ dependencies = [
 ]
 requires-python = "==3.11.*"
 readme = "README.md"
-license = {text = "MIT"}
+license = { text = "MIT" }
 
 
 [tool.pdm]
 package-type = "application"
+
+
+[tool.pdm.dev-dependencies]
+dev = [
+    "pre-commit>=3.6.0",
+]
+[tool.ruff]
+line-length = 100
+ignore = ["D203"]
+
+[tool.black]
+line-length = 100
+target-version = ['py311']

@@ -18,6 +18,9 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
+# install dependencies
+RUN apt update && apt install ffmpeg libsm6 libxext6  -y
+
 # retrieve packages from build stage
 ENV PYTHONPATH=/app/pkgs
 COPY --from=builder /app/__pypackages__/3.11/lib /app/pkgs

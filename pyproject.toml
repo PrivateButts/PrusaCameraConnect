@@ -11,6 +11,7 @@ dependencies = [
     "structlog>=24.1.0",
     "rich>=13.7.0",
     "strictyaml>=1.7.3",
+    "opencv-python>=4.9.0.80",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"

@@ -18,7 +18,17 @@ This server has the capability to snoop on your printer's status via PrusaLink. 
 - `ERROR`
 - `ATTENTION`
 
-I would recommend using the whole list but `IDLE`, `FINISHED`, and maybe `READY` and `STOPPED`.
+I would recommend using the whole list but `IDLE`, `FINISHED`, and maybe `READY` and `STOPPED`. Here's what I've been using:
+
+```yaml
+snapshot_states:
+- BUSY
+- READY
+- PRINTING
+- PAUSED
+- ERROR
+- ATTENTION
+```
 
 ### Handlers
 The handler system is plugable, since every camera works a little differently. Below is a list of the included handlers and their options:
@@ -31,6 +41,15 @@ Import path: `Camera.ImageUrl.ImageUrlHandler`
 Option | Required? | Description
 -------|-----------|------------
 `url`  |    Yes    | URL of the image to capture
+
+#### VideoCaptureHandler
+This use's [OpenCV's videoio system](https://docs.opencv.org/4.x/d0/da7/videoio_overview.html) to capture a variety of video sources. Can use several backends depending on what's available on your system.
+
+Import path: `Camera.VideoUrl.VideoCaptureHandler`
+
+Option | Required? | Description
+-------|-----------|------------
+`url`  |    Yes    | URL of the video stream. E.G. `rtsp://0.0.0.0:8445/printer`
 
 ## Deployment
 
@@ -75,7 +94,9 @@ It's pretty common for people to use Wyze Cameras to keep an eye on their printe
 
 - Just randomly generate a longish string for fingerprint
 - You can get token from the camera tab of Prusa Connect. Click "Add new other camera" then copy the token of the new entry.
-- Pick a handler based on what feeds you get out of your camera. For example, Wyze Brige exposes a snapshot url that `Camera.ImageUrl.ImageUrlHandler` can scrape. Refer to the above section on handlers to deal with it.
+![Screenshot of the section in Prusa Connect where you can create a new camera](docs/images/prusa%20connect%20camera%20creation.png)
+- Pick a handler based on what feeds you get out of your camera. For example, Wyze Brige exposes a snapshot url that `Camera.ImageUrl.ImageUrlHandler` can scrape. You can find the url by hovering over the "Streams" button of the camera, then copying the url from the "RTSP Snapshot" menu option.
+![Screenshot of Wyze Bridge showing where the link is](docs/images/wyze%20rtsp%20stream.png)
 - `printer_link` is optional. Not providing it will cause the server to constantly relay snapshots to prusa cloud. I prefer to only have it update when the printer is in use, ready, or requires intervention or attention. Use the credentials in your printer's settings, url will most likely be http:// + ip address of your printer.
 
 5. Start the server with `docker compose up`. To start in background, use `-d`.

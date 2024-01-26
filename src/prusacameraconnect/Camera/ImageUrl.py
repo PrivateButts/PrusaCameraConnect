@@ -21,7 +21,7 @@ class ImageUrlHandler(BaseCameraHandler):
         return aiohttp.ClientSession()
 
     async def fetch(self) -> Image:
-        """Base method for fetching an image from the camera. Returns a PIL Image."""
+        """Fetches an image from self.url. Returns a PIL Image."""
         async with self._session as session:
             async with session.get(self.url) as resp:
                 if resp.status != 200:

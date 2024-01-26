@@ -2,6 +2,7 @@ import asyncio
 import structlog
 from PrusaAPI import PrusaConnectAPI, PrusaLinkAPI
 from Config import Config, Camera
+from Camera import SourceOfflineException
 
 log = structlog.get_logger()
 config = Config()
@@ -31,6 +32,8 @@ async def camera_loop(camera: Camera):
             await api.upload_snapshot(camera.token, camera.fingerprint, image)
         except KeyboardInterrupt:
             return
+        except SourceOfflineException:
+            log.warn("No image available, skipping")
         except Exception:
             await log.aexception(f"Job failed for {camera.name}")
         await asyncio.sleep(camera.interval)

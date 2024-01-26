@@ -7,6 +7,10 @@ from Types import Camera
 log = structlog.get_logger()
 
 
+class SourceOfflineException(Exception):
+    pass
+
+
 class BaseCameraHandler:
     camera: Camera
 

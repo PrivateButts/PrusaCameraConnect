@@ -1,20 +1,43 @@
-# build stage
-FROM python:3.11-slim AS builder
+ARG build_mode='prod'
 
-# install PDM
-RUN pip install -U pip setuptools wheel
-RUN pip install pdm
 
-# copy files
-COPY pyproject.toml pdm.lock /app/
+FROM python:3.11-slim AS base-build
 
-# install dependencies and project into the local packages directory
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
-RUN mkdir __pypackages__ && pdm sync --prod --no-editable
 
+# copy pdm lock files
+COPY ./pyproject.toml ./pyproject.toml
+COPY ./pdm.lock ./pdm.lock
+
+# install pdm
+RUN pip install --no-cache-dir --upgrade pip
+RUN pip install --no-cache-dir pdm
+
+
+FROM base-build AS dev-build
+# Freeze requirements
+RUN pdm export -f requirements --dev > requirements.txt
+
+FROM base-build AS prod-build
+# Freeze requirements
+RUN pdm export -f requirements > requirements.txt
+
+
+FROM ${build_mode}-build AS build-venv
+
+# Create Virtualenv and Install
+RUN python -m venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
+RUN pip install --no-cache-dir -r requirements.txt
 
 # run stage
-FROM python:3.11-slim
+FROM python:3.11-slim AS server
+
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
@@ -22,11 +45,8 @@ WORKDIR /app
 RUN apt update && apt install ffmpeg libsm6 libxext6  -y
 
 # retrieve packages from build stage
-ENV PYTHONPATH=/app/pkgs
-COPY --from=builder /app/__pypackages__/3.11/lib /app/pkgs
-
-# retrieve executables
-COPY --from=builder /app/__pypackages__/3.11/bin/* /bin/
+COPY --from=build-venv /opt/venv /opt/venv
+ENV PATH="/opt/venv/bin:$PATH"
 
 # copy project files
 COPY src/prusacameraconnect /app/

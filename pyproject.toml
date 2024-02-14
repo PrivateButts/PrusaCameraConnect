@@ -10,6 +10,8 @@ dependencies = [
     "rich>=13.7.0",
     "strictyaml>=1.7.3",
     "opencv-python>=4.9.0.80",
+    "aiogram>=3.3.0",
+    "aiosmtplib>=3.0.1",
 ]
 requires-python = "==3.11.*"
 readme = "README.md"
@@ -21,7 +23,11 @@ distribution = false
 
 
 [tool.pdm.dev-dependencies]
-dev = ["pre-commit>=3.6.0"]
+dev = [
+    "pre-commit>=3.6.0",
+    "debugpy>=1.8.1",
+    "watchdog>=4.0.0",
+]
 [tool.ruff]
 line-length = 100
 ignore = ["D203"]

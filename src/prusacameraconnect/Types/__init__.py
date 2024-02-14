@@ -43,10 +43,14 @@ SCHEMA = Map(
                             "snapshot_states": Seq(YamlEnum([x.value for x in PrinterState])),
                         }
                     ),
-                    Optional("plugins"): Seq(Map({
-                        "name": Str(),
-                        Optional("config"): Any(),
-                    })),
+                    Optional("plugins"): Seq(
+                        Map(
+                            {
+                                "name": Str(),
+                                Optional("config"): Any(),
+                            }
+                        )
+                    ),
                 }
             )
         ),
@@ -92,4 +96,12 @@ class Camera:
         self.handle: "Camera.BaseCameraHandler" = handler_class(self, self.handler_config)
 
         if self.plugins is not None:
-            self.plugins = [getattr(module, plugin["name"])(**plugin.get("config", {})) for plugin in self.plugins]
+            log.debug(f"Loading plugins for {self.name}")
+            plugins = []
+            for plugin in self.plugins:
+                module_name = ".".join(plugin["name"].split(".")[0:-1])
+                class_name = plugin["name"].split(".")[-1]
+                log.debug(f"Importing {class_name} from {module_name}")
+                module = importlib.import_module(module_name)
+                plugins.append(getattr(module, class_name)(plugin.get("config", {})))
+            self.plugins = plugins

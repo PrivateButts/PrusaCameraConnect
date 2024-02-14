@@ -22,7 +22,7 @@ class ImageUrlHandler(BaseCameraHandler):
         """Returns an aiohttp ClientSession."""
         return aiohttp.ClientSession()
 
-    async def fetch(self) -> Image:
+    async def get_snapshot(self) -> Image:
         """Fetches an image from self.url. Returns a PIL Image."""
         async with self._session as session:
             async with session.get(self.url) as resp:

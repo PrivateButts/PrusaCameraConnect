@@ -1,0 +1,15 @@
+version: '3'
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - build_mode=dev
+    restart: unless-stopped
+    volumes:
+      # You can mount a config file here, or use the APP_CONFIG environment variable
+      - ./src/prusacameraconnect/:/app/
+    command: watchmedo auto-restart --no-restart-on-command-exit --directory=./ --patterns="*.py;*.yaml" --recursive -- python -m debugpy --listen 0.0.0.0:6900 /app/main.py
+    ports:
+      - "6900:6900"

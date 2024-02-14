@@ -5,12 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Python Debugger: Remote Attach",
+            "type": "debugpy",
+            "request": "attach",
+            "connect": {
+                "host": "localhost",
+                "port": 6900
+            },
+            "pathMappings": [
+                {
+                    "localRoot": "${workspaceFolder}",
+                    "remoteRoot": "/app"
+                }
+            ]
+        },
+        {
             "name": "Python Debugger: main.py",
             "type": "debugpy",
             "request": "launch",
             "program": "main.py",
             "cwd": "${workspaceFolder}/src/prusacameraconnect",
             "console": "integratedTerminal"
-        }
+        },
     ]
 }

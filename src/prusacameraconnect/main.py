@@ -1,4 +1,5 @@
 import asyncio
+import io
 import structlog
 from PrusaAPI import PrusaConnectAPI, PrusaLinkAPI
 from Config import Config, Camera
@@ -31,8 +32,13 @@ async def camera_loop(camera: Camera):
             image = await camera.handle.get_snapshot()
             if camera.plugins is not None:
                 for plugin in camera.plugins:
-                    image = plugin.image_processing_hook(image)
-            await api.upload_snapshot(camera.token, camera.fingerprint, image)
+                    image = await plugin.image_processing_hook(image)
+
+            # Encode the image to a byte string
+            stringBuffer = io.BytesIO()
+            image.save(stringBuffer, format="JPEG")
+            await log.adebug("Converted to JPEG", size=stringBuffer.getbuffer().nbytes)
+            await api.upload_snapshot(camera.token, camera.fingerprint, stringBuffer.getvalue())
         except KeyboardInterrupt:
             return
         except SourceOfflineException:

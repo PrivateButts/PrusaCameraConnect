@@ -41,7 +41,7 @@ class VideoCaptureHandler(BaseCameraHandler):
             _, frame = self.source.retrieve()
         return frame
 
-    async def fetch(self) -> Image:
+    async def get_snapshot(self) -> Image:
         """Fetches an image from the video stream"""
         if not self.source.isOpened():
             log.warn("Source offline, unable to fetch image")

@@ -17,5 +17,9 @@ run:
     cd src/prusacameraconnect && pdm run python main.py
 
 
+docker-dev *COMMAND:
+    docker compose -f docker-compose.dev.yaml {{COMMAND}}
+
+
 pre-commit:
     pdm run pre-commit run --all-files

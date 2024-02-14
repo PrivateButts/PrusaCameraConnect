@@ -29,6 +29,9 @@ async def camera_loop(camera: Camera):
                     continue
             await log.ainfo(f"Updating {camera.name}")
             image = await camera.handle.get_snapshot()
+            if camera.plugins is not None:
+                for plugin in camera.plugins:
+                    image = plugin.image_processing_hook(image)
             await api.upload_snapshot(camera.token, camera.fingerprint, image)
         except KeyboardInterrupt:
             return

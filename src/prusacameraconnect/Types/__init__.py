@@ -43,6 +43,10 @@ SCHEMA = Map(
                             "snapshot_states": Seq(YamlEnum([x.value for x in PrinterState])),
                         }
                     ),
+                    Optional("plugins"): Seq(Map({
+                        "name": Str(),
+                        Optional("config"): Any(),
+                    })),
                 }
             )
         ),
@@ -75,6 +79,7 @@ class Camera:
     handler: str
     handler_config: dict
     printer_link: PrinterLink | None = None
+    plugins: list = None
 
     def __post_init__(self):
         self.printer_link = PrinterLink(**self.printer_link) if self.printer_link else None
@@ -85,3 +90,6 @@ class Camera:
         module = importlib.import_module(module_name)
         handler_class = getattr(module, class_name)
         self.handle: "Camera.BaseCameraHandler" = handler_class(self, self.handler_config)
+
+        if self.plugins is not None:
+            self.plugins = [getattr(module, plugin["name"])(**plugin.get("config", {})) for plugin in self.plugins]
